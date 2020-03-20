@@ -11,10 +11,10 @@ from scipy.sparse import csr_matrix, save_npz, load_npz
 
 
 num_newsgroups = 20
-#num_training = 12000
-#num_tests = 6774
-num_tests = 10
-num_training = 50
+num_training = 12000
+num_tests = 6774
+#num_tests = 10
+#num_training = 50
 vocab_size = 61188
 ita=0.01
 def get_parsed_matrix(csv_file, matrix_file):
@@ -125,7 +125,7 @@ def getbeta_forclasses(features,labels,weights):
     result_beta_matrix=np.zeros([num,1])
     for classlabel in range (1,21):
         y_new=np.where(labels==classlabel,1,0)
-        weights,cost=train(features,y_new,weights,0.01,400)
+        weights,cost=train(features,y_new,weights,0.01,5000)
         #weights=weights.reshape(-1,1)
         result_beta_matrix=np.concatenate((result_beta_matrix,weights),axis=1)
     result_beta_matrix=np.delete(result_beta_matrix,0,1)
@@ -269,12 +269,12 @@ def split(X_total):
      return X,Y
 
 
-resultfile=open('training-501.csv','r')
+resultfile=open('training.csv','r')
 #matrixfile=open('matrix','w')
-testingfile=open('testing-101.csv','r')
+testingfile=open('testing.csv','r')
 
-X_total=get_parsed_matrix(resultfile,'training-matrix-50.npz')
-X_test=get_parsed_matrix(testingfile,'testing-matrix-10.npz')
+X_total=get_parsed_matrix(resultfile,'training-matrix-total.npz')
+X_test=get_parsed_matrix(testingfile,'testing-matrix-total.npz')
 X_test[:,0]=1
 X_test = np.array(X_test)
 features,labels=split(X_total)
@@ -286,7 +286,7 @@ beta=getbeta_forclasses(features,labels,weights_initial)
 result_array=get_classification(X_test,beta)
 
 classification=classify_data(result_array)
-resultfile1=open('result2-0318.csv','w')
+resultfile1=open('0319-test1.csv','w')
 save_result_File(classification, resultfile1)
 resultfile.close()
 resultfile1.close()
